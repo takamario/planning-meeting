@@ -1,28 +1,33 @@
 <!DOCTYPE html>
-<title>{{ title }}</title>
+<title>Planning Board</title>
 <link rel="stylesheet" href="/stylesheets/pure-0.3.0.min.css">
 <link rel="stylesheet" href="/stylesheets/pl.css">
-<div ng-app="plApp" ng-controller="PlCtrl">
+<div class="pl-margin" ng-app="plApp" ng-controller="PlCtrl">
   <form class="pure-form">
-    <input class="pure-input-1 pl-margin" type="text" placeholder="Please input JQL">
-    <button class="pure-button pure-button-success pl-margin">Search</button>
+    <input type="text" placeholder="JIRA username" ng-model="username">
+    <input class="pl-margin" type="password" placeholder="JIRA password" ng-model="password">
+    <input class="pure-input-1 pl-margin" type="text" ng-model="jql" placeholder="Please input JQL">
+    <p ng-show="errorMessage">{* errorMessage *}</p>
+    <button class="pure-button pure-button-success pl-margin" ng-click="searchTicket()">Search</button>
     <input class="pure-input-1 pl-margin" type="text" placeholder="Please input team name with CSV format" ng-model="newTeams" ng-change="teamChange()">
     <table class="pure-table pure-table-bordered">
       <thead>
         <tr>
           <th class="start-column">Ticket.No</th>
-          <th class="start-column">Product Area <input type="text" ng-model="productArea"></th>
+          <th class="start-column">Summary</th>
+          <th class="start-column">Product Area<br><input type="text" ng-model="productArea" placeholder="Filter Product Area"></th>
           <th ng-repeat="team in teams">{* team *}</th>
-          <th class="end-column">Final Answer <select ng-model="finalAnswerList" ng-options="a for a in ['ALL', '???'].concat(answerOptions)"></select></th>
+          <th class="end-column">Final Answer<br><select ng-model="finalAnswerList" ng-options="a for a in ['ALL', '???'].concat(answerOptions)"></select></th>
         </tr>
       </thead>
 
       <tbody>
         <tr ng-repeat="ticket in (tickets | filter:productArea | answerFilter:finalAnswerList)">
           <td><a href="#">{* ticket.ticketNo *}</a></td>
+          <td><a href="#">{* ticket.summary *}</a></td>
           <td>{* ticket.productArea *}</td>
           <td ng-repeat="team in teams" ng-class="answerColor(ticket.answers[team])">
-            <select title="{* ticket.ticketNo *} - {* team *}" ng-change="valueChange()" ng-model="ticket.answers[team]" ng-options="a for a in answerOptions"></select>
+            <select title="{* ticket.ticketNo *} {* ticket.summary *} - {* team *}" ng-change="valueChange()" ng-model="ticket.answers[team]" ng-options="a for a in answerOptions"></select>
           </td>
           <td><span>{* ticket.finalAnswer *}</span></td>
         </tr>

@@ -30,6 +30,7 @@ app.configure("development", function() {
 });
 
 app.get("/", routes.index);
+app.post("/jql", routes.jql);
 
 server.listen(app.get("port"), function() {
   console.log("Express server listening on port " + app.get("port"));

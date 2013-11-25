@@ -9,6 +9,7 @@
     "express": "3.1.0",
     "hjs": "*",
     "socket.io": "*",
-    "async": "*"
+    "async": "*",
+    "request": "*"
   }
 }
