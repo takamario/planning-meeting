@@ -44,3 +44,39 @@ exports.jql = function(req, res) {
     });
   });
 };
+
+exports.save = function(req, res) {
+  var plData = req.body
+    , redis = require("redis")
+    , redisCli = redis.createClient()
+    , prefix = "planning-meeting:"
+    , password = "PASSWORD";
+
+  redisCli.on("error", function(error) {
+    res.json({
+      statusCode: 500,
+      error: error
+    });
+    redisCli.end();
+    return;
+  });
+
+  redisCli.auth(password, function(err) {
+    if (err) {
+      res.json({
+        statusCode: 500,
+        error: error
+      });
+      redisCli.end();
+      return;
+    }
+    redisCli.set(prefix + plData.planName, JSON.stringify(plData.detail), function(error, result) {
+      res.json({
+        statusCode: 200,
+        error: null
+      });
+      redisCli.end();
+      return;
+    });
+  });
+};

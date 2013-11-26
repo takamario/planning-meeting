@@ -10,7 +10,7 @@
     <p ng-show="errorMessage">{* errorMessage *}</p>
     <button class="pure-button pure-button-success pl-margin" ng-click="searchTicket()">Search</button>
     <input class="pure-input-1 pl-margin" type="text" placeholder="Please input team name with CSV format" ng-model="newTeams" ng-change="teamChange()">
-    <table class="pure-table pure-table-bordered">
+    <table class="pure-table pure-table-bordered pl-margin">
       <thead>
         <tr>
           <th class="start-column">Ticket.No</th>
@@ -33,6 +33,7 @@
         </tr>
       </tbody>
     </table>
+    <input type="text" ng-model="planName" placeholder="Input plan name" class="pl-margin"><button class="pure-button pure-button-secondary pl-margin" ng-click="saveData()">Save</button>
   </form>
 </div><!-- /ng-app -->
 <script src="/javascripts/angular-1.2.2.min.js"></script>

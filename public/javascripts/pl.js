@@ -20,7 +20,7 @@ angular.module("plFilters", []).filter("answerFilter", [function() {
 }]);
 
 
-plApp.controller("PlCtrl", ["$scope", "$http", function($scope, $http) {
+plApp.controller("PlCtrl", ["$scope", "$http", "$filter", function($scope, $http, $filter) {
   $scope.productArea = "";
   $scope.answerOptions = ["OK", "NG", "N/A"];
   $scope.teams = ["team1", "team2", "team3", "team4", "team5", "team6", "team7", "team8", "team9"];
@@ -28,6 +28,7 @@ plApp.controller("PlCtrl", ["$scope", "$http", function($scope, $http) {
   $scope.finalAnswerList = "ALL";
   $scope.errorMessage = "";
   $scope.tickets = [];
+  $scope.planName = $filter("date")(new Date(), "yyyy-MM-dd");
 
   for (var i = 0, l = $scope.tickets.length; i < l; i++) {
     // TODO: No need to loop over and over
@@ -110,6 +111,17 @@ plApp.controller("PlCtrl", ["$scope", "$http", function($scope, $http) {
     });
   };
 
+  $scope.saveData = function() {
+    sendServer({
+      planName: $scope.planName,
+      detail: {
+        jql: $scope.jql,
+        tickets: $scope.tickets,
+        teams: $scope.teams,
+      }
+    });
+  };
+
   function connectJIRA(params) {
     $http.post("/jql", params)
       .success(function(data) {
@@ -143,6 +155,17 @@ plApp.controller("PlCtrl", ["$scope", "$http", function($scope, $http) {
       productArea.push(data[i].value);
     }
     return productArea.sort().join(", ");
+  }
+
+  function sendServer(data) {
+    $http.post("/save", data)
+      .success(function(response) {
+        if (response.statusCode !== 200) {
+          $scope.errorMessage = "Status: " + response.statusCode + ", Error: " + response.error;
+          return;
+        }
+        $scope.errorMessage = "Saved!";
+      });
   }
 
   socket.on("valueChange", function(data) {
