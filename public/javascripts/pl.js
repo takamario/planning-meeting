@@ -21,13 +21,19 @@ angular.module("plFilters", []).filter("answerFilter", [function() {
 
 
 plApp.controller("PlCtrl", ["$scope", "$http", "$filter", function($scope, $http, $filter) {
-  $scope.productArea = "";
-  $scope.answerOptions = ["OK", "NG", "N/A"];
+  $scope.answerOptions = ["OK", "NG", "N/A", "???"];
+  $scope.columns = ["Type", "Ticket.No", "Summary", "Assignee", "Priority", "Status", "Product Area", "Labels", "Epic/Theme", "Marketplace"];
   $scope.teams = ["team1", "team2", "team3", "team4", "team5", "team6", "team7", "team8", "team9"];
   $scope.newTeams = $scope.teams.join(", ");
-  $scope.finalAnswerList = "ALL";
   $scope.errorMessage = "";
   $scope.tickets = [];
+  $scope.assignee = "";
+  $scope.status = "";
+  $scope.productArea = "";
+  $scope.labels = "";
+  $scope.epicTheme = "";
+  $scope.marketplace = "";
+  $scope.finalAnswerList = "ALL";
   $scope.planName = $filter("date")(new Date(), "yyyy-MM-dd");
 
   for (var i = 0, l = $scope.tickets.length; i < l; i++) {
@@ -138,10 +144,18 @@ plApp.controller("PlCtrl", ["$scope", "$http", "$filter", function($scope, $http
     var tickets = [];
     for (var i = 0, l = data.result.issues.length; i < l; i++) {
       tickets.push({
+        issuetype: data.result.issues[i].fields.issuetype.name,
         ticketNo: data.result.issues[i].key,
         summary: data.result.issues[i].fields.summary,
+        assignee: parseAssignee(data.result.issues[i].fields.assignee),
+        priority: data.result.issues[i].fields.priority.name,
+        status: data.result.issues[i].fields.status.name,
         productArea: parseProductArea(data.result.issues[i].fields.customfield_11800),
-        answers: {}
+        labels: parseEpicTheme(data.result.issues[i].fields.labels),
+        epicTheme: parseEpicTheme(data.result.issues[i].fields.customfield_10001),
+        marketplace: parseProductArea(data.result.issues[i].fields.customfield_12900),
+        answers: {},
+        ticketUrl: "https://" + data.jiraDomain + "/browse/" + data.result.issues[i].key
       });
     }
     $scope.tickets = tickets;
@@ -149,12 +163,22 @@ plApp.controller("PlCtrl", ["$scope", "$http", "$filter", function($scope, $http
     $scope.restructAnswers();
   }
 
+  function parseAssignee(data) {
+    return (data !== null) ? data.displayName : "(Unassigned)";
+  }
+
   function parseProductArea(data) {
     var productArea = [];
+    if (data === null) return null;
     for (var i = 0, l = data.length; i < l; i++) {
       productArea.push(data[i].value);
     }
     return productArea.sort().join(", ");
+  }
+
+  function parseEpicTheme(data) {
+    if (data === null) return null;
+    return data.sort().join(", ");
   }
 
   function sendServer(data) {

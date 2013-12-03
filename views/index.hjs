@@ -13,19 +13,33 @@
     <table class="pure-table pure-table-bordered pl-margin">
       <thead>
         <tr>
+          <th class="start-column">Type</th>
           <th class="start-column">Ticket.No</th>
           <th class="start-column">Summary</th>
+          <th class="start-column">Assignee<br><input type="text" ng-model="assignee" placeholder="Filter Assignee"></th>
+          <th class="start-column">Priority</th>
+          <th class="start-column">Status<br><input type="text" ng-model="status" placeholder="Filter Status"></th>
           <th class="start-column">Product Area<br><input type="text" ng-model="productArea" placeholder="Filter Product Area"></th>
+          <th class="start-column">Labels<br><input type="text" ng-model="labels" placeholder="Filter Labels"></th>
+          <th class="start-column">Epic/Theme<br><input type="text" ng-model="epicTheme" placeholder="Filter Epic/Theme"></th>
+          <th class="start-column">Marketplace<br><input type="text" ng-model="marketplace" placeholder="Filter Marketplace"></th>
           <th ng-repeat="team in teams">{* team *}</th>
           <th class="end-column">Final Answer<br><select ng-model="finalAnswerList" ng-options="a for a in ['ALL', '???'].concat(answerOptions)"></select></th>
         </tr>
       </thead>
 
       <tbody>
-        <tr ng-repeat="ticket in (tickets | filter:productArea | answerFilter:finalAnswerList)">
-          <td><a href="#">{* ticket.ticketNo *}</a></td>
-          <td><a href="#">{* ticket.summary *}</a></td>
+        <tr ng-repeat="ticket in (tickets | filter:assignee | filter:status | filter:productArea | filter:labels | filter:epicTheme | filter:marketplace | answerFilter:finalAnswerList)">
+          <td>{* ticket.issuetype *}</td>
+          <td><a ng-href="{* ticket.ticketUrl *}">{* ticket.ticketNo *}</a></td>
+          <td><a ng-href="{* ticket.ticketUrl *}">{* ticket.summary *}</a></td>
+          <td>{* ticket.assignee *}</td>
+          <td>{* ticket.priority *}</td>
+          <td>{* ticket.status *}</td>
           <td>{* ticket.productArea *}</td>
+          <td>{* ticket.labels *}</td>
+          <td>{* ticket.epicTheme *}</td>
+          <td>{* ticket.marketplace *}</td>
           <td ng-repeat="team in teams" ng-class="answerColor(ticket.answers[team])">
             <select title="{* ticket.ticketNo *} {* ticket.summary *} - {* team *}" ng-change="valueChange()" ng-model="ticket.answers[team]" ng-options="a for a in answerOptions"></select>
           </td>

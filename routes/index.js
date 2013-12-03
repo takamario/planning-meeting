@@ -11,16 +11,25 @@ exports.jql = function(req, res) {
     });
     return;
   }
-  var request = require("request");
+  var request = require("request")
+    , jiraDomain = "localhost";
   request({
-    url: "https://localhost/rest/api/2/search",
+    url: "https://" + jiraDomain + "/rest/api/2/search",
     json: {
       jql: req.body.jql,
       maxResults: 500,
       fields: [
+        "issuetype",
         "key",
         "summary",
-        "customfield_11800"  // Product Area
+        "assignee",
+        "priority",
+        "status",
+        "resolution",
+        "customfield_11800",  // Product Area
+        "labels",
+        "customfield_10001",  // Epic/Theme
+        "customfield_12900"   // Marketplace
       ]
     },
     method: "post",
@@ -33,14 +42,16 @@ exports.jql = function(req, res) {
       res.json({
         statusCode: response.statusCode,
         error: error,
-        result: {}
+        result: {},
+        jiraDomain: jiraDomain
       });
       return;
     }
     res.json({
       statusCode: response.statusCode,
       error: null,
-      result: body
+      result: body,
+      jiraDomain: jiraDomain
     });
   });
 };
